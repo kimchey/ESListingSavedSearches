@@ -1,0 +1,141 @@
+require 'tire'
+require 'time'
+require 'uri'
+require 'tire'
+require 'rubygems'
+
+class ESQueryAdapter
+
+  def initialize(hash)
+    @input_hash = hash
+    @idx_type = hash["resource_type"]
+  end
+
+  def idx_type
+    @idx_type
+  end
+
+  def type
+    @idx_type
+  end
+
+  def idx
+    Tire::index @idx_type
+  end
+
+  def mapping
+    self.idx.mapping
+  end
+
+  def create_mapping(field, field_type)
+    idx_t = @idx_type
+    idx_sym = idx_t.to_sym
+    field_sym = field.to_sym
+    Tire.index idx_t do
+      create :mappings => {
+          idx_sym => {
+              :properties => {
+                  field_sym => {:type => field_type}
+              }
+          }
+      }
+    end
+  end
+
+  def parse
+    @query = []
+    arr_val = @input_hash["query"]
+    arr_val.each do |a_hash|
+      a_hash.each do |key, value|
+        method = "parse_#{value[0]}".to_sym
+        self.send method, key, value
+      end
+    end
+    @query
+  end
+
+  def parse_long(key, value)
+    q =  value[1].length > 1  ?
+        {:range => {key.to_sym => {:from => value[1][0], :to => value[1][1]}}} :
+        {:term => {key.to_sym => value[1][0]}}
+    @query << q
+  end
+
+  def parse_string(key, value)
+    q = value[1].length > 1 ?
+                {:terms => {key.to_sym => value[1]}} :
+                {:term => {key.to_sym => value[1][0]}}  #does not work for string
+    @query << q
+  end
+
+  def parse_text(key, value)
+    q = {:query => {:match => {key.to_sym => value[1][0]}}}
+    @query << q
+  end
+
+  def parse_phrase(key, value)
+    #This will match
+    q = {:query => {:match_phrase => {key.to_sym => value[1][0]}}}
+    @query << q
+  end
+
+  def parse_text_and(key, value)
+    q = {:query => {:match => {key.to_sym => {
+                              :query => value[1][0],
+                              :operator => "and"}
+                              }
+                    }
+        }
+    @query << q
+  end
+
+  def parse_text_or(key, value)
+    q = {:query => {:match => {key.to_sym => {
+                              :query => value[1][0],
+                              :operator => "or"}
+                              }
+                  }
+        }
+    @query << q
+  end
+
+  def parse_geopoint(key, value)
+    q = {:geo_distance => {:distance => value[1][2],key.to_sym => [value[1][1].to_f, value[1][0].to_f]}}
+    @query << q
+  end
+
+  def parse_geopoly(key, value)
+    q = {:geo_polygon => {
+                          key.to_sym => {
+                              :points => value[1]
+                            }
+                          }
+        }
+    @query << q
+  end
+
+end
+
+#{"location" => ["geopoly", ["34.98123, -90.35156",
+#                            "36.47944, -90.26367",
+#                            "36.76161, -84.63867",
+#                            "34.83708, -84.81445",
+#                            ]
+#                ]
+#}
+=begin
+query_hash = {"query" =>
+                  [{"beds" => ["long", [1,3]]},
+                   {"zip" => ["string", ["38119", "38125"]]},
+                   {"location" => ["geopoint", [40, 70, "120km"]]},
+                   {"price" => ["long", [140000, 200000]]},
+                   {"address" => ["string", ["7009 Fellsway Cove"]]},
+                   {"comment" => ["string", ["this is a comment"]]}
+                  ]
+             }
+#debugger
+qp = ESQueryParser.new(query_hash)
+query = qp.parse
+
+puts query
+=end

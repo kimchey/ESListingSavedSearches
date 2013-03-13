@@ -1,0 +1,267 @@
+Sample curls
+------------
+Heroku url: http://warm-basin-6019.herokuapp.com/
+
+curl -XPOST http://warm-basin-6019.herokuapp.com/listing_queries/create -d '
+            {"query" :
+                  [{"beds": ["long", [1,3]]},
+                   {"zip": ["string", ["38119", "38125"]]},
+                   {"location": ["geopoint", [40, -70, "1200km"]]},
+                   {"price":  ["long", [140000, 200000]]}
+                  ],
+              "resource_type": "listing",
+              "query_id": "memberID1-q1"
+            }'   -H "Accept: application/json" -H "Content-Type: application/json"
+
+1) Create listing query:
+
+a1)
+ curl -XPOST http://localhost:3000/listing_queries/create -d '
+ {"query" :
+       [{"beds": ["long", [1]]},
+        {"baths": ["long", [1]]},
+        {"zip": ["string", ["38119"]]},
+        {"price":  ["long", [140000]]}
+       ],
+   "resource_type": "listing",
+   "query_id": "memberID1-a1"
+ }'   -H "Accept: application/json" -H "Content-Type: application/json"
+
+curl -XPOST http://localhost:3000/listings/find -d '
+{ "listing":
+    { "id": "listing_id1",
+      "resource_type": "listing",
+      "address": "7009 Fellsway Cove",
+      "beds": 1,
+      "baths":1,
+      "zip": "38119",
+      "location": {"lat": 40.12, "lon": -71.34},
+      "price":  140000,
+      "comment": "this is a comment"
+     }
+}' -H "Accept: application/json" -H "Content-Type: application/json"
+
+a2)
+
+ curl -XPOST http://localhost:3000/listing_queries/create -d '
+ {"query" :
+       [{"beds": ["long", [3,5]]},
+        {"baths": ["long", [2,3]]},
+        {"price":  ["long", [140000, 145000]]},
+        {"location": ["geopoint", [35.1094, -89.9524, "2km"]]}
+       ],
+   "resource_type": "listing",
+   "query_id": "memberID1-a3geopoint"
+ }'   -H "Accept: application/json" -H "Content-Type: application/json"
+
+   curl -XPOST http://localhost:3000/listings/find -d '
+   { "listing":
+       { "id": "listing_id1",
+         "resource_type": "listing",
+         "address": "7009 Fellsway Cove",
+         "beds": 3,
+         "baths":2,
+         "zip": "38119",
+         "location": {"lat": 35.1075, "lon": -89.9329},
+         "price":  142000,
+         "comment": "this is a comment"
+        }
+   }' -H "Accept: application/json" -H "Content-Type: application/json"
+
+   curl -XPOST http://localhost:3000/listings/find -d '
+   { "listing":
+       { "id": "listing_id1",
+         "resource_type": "listing",
+         "address": "7009 Fellsway Cove",
+         "beds": 3,
+         "baths":2,
+         "zip": "38119",
+         "location": {"lat": 35.0930, "lon": -89.9247},
+         "price":  142000,
+         "comment": "this is a comment"
+        }
+   }' -H "Accept: application/json" -H "Content-Type: application/json"
+
+a)
+curl -XPOST http://localhost:3000/listing_queries/create -d '
+    {"query" :
+          [{"beds": ["long", [1,3]]},
+           {"zip": ["string", ["38119", "38125"]]},
+           {"location": ["geopoint", [40, -70, "1200km"]]},
+           {"price":  ["long", [140000, 200000]]}
+          ],
+      "resource_type": "listing",
+      "query_id": "memberID1-q1"
+    }'   -H "Accept: application/json" -H "Content-Type: application/json"
+
+b)
+curl -XPOST http://localhost:3000/listing_queries/create -d '
+    {"query" :
+          [{"address": ["text", ["7009 F"]]}
+          ],
+      "resource_type": "listing",
+      "query_id": "memberID1-qtxt1"
+    }'   -H "Accept: application/json" -H "Content-Type: application/json"
+
+
+curl -XPOST http://localhost:3000/listing_queries/create -d '
+    {"query" :
+          [{"address": ["phrase", ["7009 Fellsway"]]}
+          ],
+      "resource_type": "listing",
+      "query_id": "memberID1-qtxt1"
+    }'   -H "Accept: application/json" -H "Content-Type: application/json"
+
+c)
+curl -XPOST http://localhost:3000/listing_queries/create -d '
+    {"query" :
+          [{"address": ["text", ["7009 F"]]},
+           {"field1": ["string", ["field1"]]}
+          ],
+      "resource_type": "listing",
+      "query_id": "memberID1-q3"
+    }'   -H "Accept: application/json" -H "Content-Type: application/json"
+
+d) curl -XPOST http://localhost:3000/listing_queries/create -d '
+   {"query" :
+         [
+          {"field1": ["string", ["field1"]]}
+         ],
+     "resource_type": "listing",
+     "query_id": "memberID1-q4"
+   }'   -H "Accept: application/json" -H "Content-Type: application/json"
+e)
+curl -XPOST http://localhost:3000/listing_queries/create -d '
+   {"query" :
+         [
+          {"beds": ["long", [1,4]]},
+          {"baths": ["long", [1,3]]},
+          {"location": ["geopoint", [40, -70, "120km"]]}
+         ],
+     "resource_type": "listing",
+     "query_id": "memberID1-q5"
+   }'   -H "Accept: application/json" -H "Content-Type: application/json"
+f)
+curl -XPOST http://localhost:3000/listing_queries/create -d '
+   {"query" :
+         [
+           {"comments": ["text", ["Awesome house"]]}
+         ],
+     "resource_type": "listing",
+     "query_id": "memberID1-q6"
+   }'   -H "Accept: application/json" -H "Content-Type: application/json"
+
+
+curl -XPOST http://localhost:3000/listings/find -d '
+    { "listing":
+        { "id": "listing_id3",
+          "resource_type": "listing",
+          "beds": 3,
+          "baths":2,
+          "zip": "38125",
+          "price":  1400000,
+          "address": "7009 Fellsway Cove",
+          "comments": "field1 awesome house"
+         }
+    }' -H "Accept: application/json" -H "Content-Type: application/json"
+
+g)
+
+curl -XPOST http://localhost:3000/listing_queries/create -d '
+   {"query" :
+         [
+          {"beds": ["long", [2,5]]},
+          {"baths": ["long", [1,2]]},
+          {"location": ["geopoly", ["34.98123, -90.35156",
+                                      "36.47944, -90.26367",
+                                      "36.76161, -84.63867",
+                                      "34.83708, -84.81445"
+                                      ]]}
+         ],
+
+     "query_id": "memberID1-q7poly"
+   }'   -H "Accept: application/json" -H "Content-Type: application/json"
+percolate:
+curl -XPOST http://localhost:3000/listings/find -d '
+    { "listing":
+        { "id": "listing_id1",
+          "resource_type": "listing",
+          "address": "7009 Fellsway Cove",
+          "beds": 3,
+          "baths":2,
+          "zip": "38125",
+          "location": {"lat": 35.48377, "lon": -88.85742},
+          "price":  140000,
+          "comment": "this is a comment"
+         }
+    }' -H "Accept: application/json" -H "Content-Type: application/json"
+
+
+2) Percolate a listing
+
+
+a)
+curl -XPOST http://localhost:3000/listings/find -d '
+    { "listing":
+        { "id": "listing_id1",
+          "resource_type": "listing",
+          "address": "7009 Fellsway Cove",
+          "beds": 3,
+          "baths":2,
+          "zip": "38125",
+          "location": {"lat": 40.12, "lon": -71.34},
+          "price":  140000,
+          "comment": "this is a comment"
+         }
+    }' -H "Accept: application/json" -H "Content-Type: application/json"
+
+b)
+curl -XPOST http://localhost:3000/listings/find -d '
+    { "listing":
+        { "id": "listing_id2",
+          "resource_type": "listing",
+          "beds": 3,
+          "baths":2,
+          "zip": "38125",
+          "price":  140000,
+          "address": "7009 Fellsway Cove"
+         }
+    }' -H "Accept: application/json" -H "Content-Type: application/json"
+c)
+curl -XPOST http://localhost:3000/listings/find -d '
+    { "listing":
+        { "id": "listing_id3",
+          "resource_type": "listing",
+          "beds": 3,
+          "baths":2,
+          "zip": "38125",
+          "price":  140000,
+          "address": "7009 Fellsway Cove",
+          "field1": "field1"
+         }
+    }' -H "Accept: application/json" -H "Content-Type: application/json"
+
+
+
+
+3) Show saved query:
+a) Get a specific member-query
+ curl -XGET localhost:9200/_percolator/listing/_search?pretty=true -d '
+            {"query":
+                {"field":
+                    {"_id": "memberID1-q3"
+                    }
+                 }
+             }'
+b) Get all queries for a specific member
+ curl -XGET localhost:9200/_percolator/listing/_search?pretty=true -d '
+            {"query":
+                {"prefix":
+                    {"_id": "memberID1-"
+                    }
+                 }
+             }'
+
+
+
+
